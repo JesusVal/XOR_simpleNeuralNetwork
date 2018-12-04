@@ -36,7 +36,9 @@ np.random.seed(0)
 
 ## Matrix between layer 0 and 1
 
-Intermediate_0_1 = 2 * np.random.random((2,1)) - 1
+Intermediate_0_1 = 2 * np.random.random((2,3)) - 1
+
+Intermediate_1_2 = 2 * np.random.random((3,1)) - 1
 
 ## Learning function
 
@@ -47,18 +49,25 @@ for i in range(20000):
     ## para después computar el resultado en la función de activación
     l1 = sigmoid(np.dot(l0, Intermediate_0_1))
 
-    ## Calculamos el error de la capa 1
-    l1_error = Result_data - l1
+    l2 = sigmoid(np.dot(l1, Intermediate_1_2))
 
-    ## Derivada pultiplicada por el error
+    ## Calculamos el error de la capa final y la derivada multiplicada por el error
+    l2_error = Result_data - l2
+    l2_delta = l2_error * sigmoid(l2, True)
+    
+
+    ## Ahora computamos el error y derivada de la capa 1
+    l1_error = np.dot(l2_delta, Intermediate_1_2.T)
     l1_delta = l1_error * sigmoid(l1, True)
 
     Intermediate_0_1 += np.dot(l0.T, l1_delta)
 
-    if(i % 1000) == 0:
-        print ("Error:" + str(np.mean(np.abs(l1_error))) )
+    Intermediate_1_2 += np.dot(l1.T, l2_delta)
 
-print (l1)
+    if(i % 1000) == 0:
+        print ("Error:" + str(np.mean(np.abs(l2_error))) )
+
+print (l2)
     
     
 
